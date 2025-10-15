@@ -27,6 +27,7 @@ entity log_login {
 entity damaged_educator {
 * id: integer
 --
+ tenant_id: integer
  created_by_id: integer
 * name: string
 * amount: integer
@@ -37,10 +38,14 @@ entity damaged_educator {
 * created_at: datetime
 * updated_at: datetime
 }
-entity city {
+entity user_donor {
 * id: integer
 --
-* name: string
+ tenant_id: integer
+* user_id: integer
+* is_monthly: boolean
+* amount: integer
+ comment: text
 * created_at: datetime
 * updated_at: datetime
 }
@@ -59,13 +64,10 @@ entity transaction {
  user_donor_first_name: string
  user_donor_last_name: string
 }
-entity user_donor {
+entity city {
 * id: integer
 --
-* user_id: integer
-* is_monthly: boolean
-* amount: integer
- comment: text
+* name: string
 * created_at: datetime
 * updated_at: datetime
 }
@@ -103,10 +105,22 @@ entity user {
  reset_token_created_at: datetime
  last_visit: datetime
 }
-log_login }o--|| user
-damaged_educator }o--o| user
-transaction }o--|| damaged_educator
-transaction }o--|| user_donor
-user ||--o{ user_donor
-log_entity_change }o--o| user
+
+entity tenant {
+* id: integer
+--
+* name: string
+ description: string
+}
+
+log_login }o-left-|| user
+log_entity_change }o-left-o| user
+transaction }o-down-|| damaged_educator
+transaction }o-down-|| user_donor
+damaged_educator }o-down-o| user
+user ||-up-o{ user_donor
+
+
+tenant ||-right-o{ user_donor
+tenant ||-right-o{ damaged_educator
 @enduml
