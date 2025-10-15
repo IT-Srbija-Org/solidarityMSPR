@@ -47,7 +47,7 @@ entity city {
 entity transaction {
 * id: integer
 --
-* user_id: integer
+* user_donor_id: integer
 * damaged_educator_id: integer
 * account_number: string
 * amount: integer
@@ -106,7 +106,7 @@ entity user {
 log_login }o--|| user
 damaged_educator }o--o| user
 transaction }o--|| damaged_educator
-transaction }o--|| user
-user_donor |o--|| user
+transaction }o--|| user_donor
+user ||--o{ user_donor
 log_entity_change }o--o| user
 @enduml
