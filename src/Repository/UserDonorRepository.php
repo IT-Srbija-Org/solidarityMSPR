@@ -58,6 +58,11 @@ class UserDonorRepository extends ServiceEntityRepository
                 ->setParameter('email', '%'.$criteria['email'].'%');
         }
 
+        if (!empty($criteria['tenant'])) {
+            $qb->andWhere('ud.tenant = :tenant')
+                ->setParameter('tenant', $criteria['tenant']);
+        }
+
         // Set the sorting
         $qb->orderBy('ud.id', 'DESC');
 
