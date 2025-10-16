@@ -6,6 +6,13 @@
 
     <div class="card card-lg bg-base-100 shadow m-4 mt-0">
         <div class="card-body">
+            {% if tenant is defined and tenant %}
+                <h2 class="card-title mb-4">
+                    <span class="ti ti-user-heart color-error text-3xl"></span>
+                    {{ tenant.name }}
+                </h2>
+                <p>{{ tenant.description }}</p>
+            {% endif %}
             <h2 class="card-title mb-4">
                 <span class="ti ti-user-heart color-error text-3xl"></span>
                 {% if app.user and app.user.userDonor %}

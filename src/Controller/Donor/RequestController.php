@@ -2,6 +2,7 @@
 
 namespace App\Controller\Donor;
 
+use App\Entity\Tenant;
 use App\Entity\UserDonor;
 use App\Form\UserDonorType;
 use App\Repository\UserDonorRepository;
@@ -87,6 +88,75 @@ class RequestController extends AbstractController
 
         return $this->render('donor/request/form.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/postani-donator/{id}', name: 'form_for_tenant')]
+    public function formForTenant(Request $request, UserRepository $userRepository, UserDonorRepository $userDonorRepository, CloudFlareTurnstileService $cloudFlareTurnstileService, Tenant $tenant): Response
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $userDonor = new UserDonor();
+        if ($user && $user->getUserDonor()) {
+            $userDonor = $user->getUserDonor();
+        }
+
+        $form = $this->createForm(UserDonorType::class, $userDonor, [
+            'user' => $user,
+        ]);
+
+        $form->handleRequest($request);
+        if (!$user && $form->isSubmitted() && $form->isValid()) {
+            $captchaToken = $request->getPayload()->get('cf-turnstile-response');
+            if (!$cloudFlareTurnstileService->isValid($captchaToken)) {
+                $form->addError(new FormError('Captcha nije validna.'));
+            }
+        }
+
+        if (!$user && $form->isSubmitted() && $form->isValid()) {
+            $firstName = $form->get('firstName')->getData();
+            $lastName = $form->get('lastName')->getData();
+            $email = $form->get('email')->getData();
+
+            $user = $userRepository->findOneBy(['email' => $email]);
+            if ($user) {
+                $form->get('email')->addError(new FormError('Korisnik sa ovom email adresom vec postoji, molimo Vas da se ulogujete i da nastavite proces.'));
+                $userRepository->sendLoginLink($user);
+            } else {
+                $user = $userRepository->createUser($firstName, $lastName, $email);
+                $userRepository->sendVerificationLink($user, 'donor');
+            }
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $isNew = !$userDonor->getId();
+
+            $userDonor->setUser($user);
+            $userDonor->setTenant($tenant);
+            $this->entityManager->persist($userDonor);
+            $this->entityManager->flush();
+
+            $user->setFirstName($form->get('firstName')->getData());
+            $user->setLastName($form->get('lastName')->getData());
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+
+            if ($isNew && $user->isEmailVerified()) {
+                $this->createTransactionService->create($userDonor, $userDonor->getAmount());
+                $userDonorRepository->sendSuccessEmail($user);
+
+                $this->addFlash('success', 'Kreirane su ti instrukcije za uplatu, ostalo je samo da ih uplatiš i potvrdiš uplatu.');
+
+                return $this->redirectToRoute('donor_transaction_list');
+            }
+
+            return $this->redirectToRoute('donor_request_success');
+        }
+
+        return $this->render('donor/request/form.html.twig', [
+            'form' => $form->createView(),
+            'tenant' => $tenant,
         ]);
     }
 
