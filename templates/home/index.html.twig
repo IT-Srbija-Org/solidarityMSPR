@@ -34,19 +34,19 @@
 {#        {{ render(controller('App\\Controller\\HomeController::generalNumbers')) }}#}
 
         {% block supportButton %}
-            {% if not app.user or not app.user.userDonor %}
-                <div class="text-center">
-                    <a href="{{ path('donor_request_form') }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
-                        <span class="ti ti-heart text-2xl"></span>
-                        Postani donator
-                    </a>
-                </div>
-            {% else %}
-                <div class="text-center">
-                    <a href="{{ path('donor_transaction_create') }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
-                        <span class="ti ti-heart text-2xl"></span>
-                        Doniraj
-                    </a>
+            {% if not app.user or app.user.userDonors is empty %}
+                <div class="text-center flex flex-col gap-4">
+                    {% for tenant in tenants %}
+                        <a href="{{ path('donor_request_form_for_tenant', { 'id': tenant.id }) }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
+                            <span class="ti ti-heart text-2xl"></span>
+                            Postani donator za {{ tenant.name }}
+                        </a>
+                    {% else %}
+                        <a href="{{ path('donor_request_form') }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
+                            <span class="ti ti-heart text-2xl"></span>
+                            Postani donator
+                        </a>
+                    {% endfor %}
                 </div>
             {% endif %}
         {% endblock %}
@@ -118,7 +118,6 @@
                 <div class="text-gray-500">
                     <p>Svi građani – ne samo iz IT sektora!</p>
                     <p class="mt-2">Ova inicijativa solidarnosti okuplja sve koji žele da podrže one koji su pogođeni represijom i da podele njihov teret.</p>
-                    <p class="mt-2 font-semibold">👉 Ako želite da pomognete, popunite <a href="/postani-donator" title="Postani donator">prijavni formular</a> ili ga prosledite nekome ko bi želeo da donira.</p>
                 </div>
 
             </section>

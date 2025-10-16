@@ -31,8 +31,8 @@ class RequestController extends AbstractController
         $user = $this->getUser();
 
         $userDonor = new UserDonor();
-        if ($user && $user->getUserDonor()) {
-            $userDonor = $user->getUserDonor();
+        if ($user && !$user->getUserDonors()->isEmpty()) {
+            $userDonor = $user->getUserDonors()->first();
         }
 
         $form = $this->createForm(UserDonorType::class, $userDonor, [
@@ -98,8 +98,8 @@ class RequestController extends AbstractController
         $user = $this->getUser();
 
         $userDonor = new UserDonor();
-        if ($user && $user->getUserDonor()) {
-            $userDonor = $user->getUserDonor();
+        if ($user) {
+            $userDonor = $userDonorRepository->findOneBy(['user' => $user, 'tenant' => $tenant]) ?? new UserDonor();
         }
 
         $form = $this->createForm(UserDonorType::class, $userDonor, [
@@ -173,25 +173,4 @@ class RequestController extends AbstractController
         return $this->render('donor/request/success_need_verify.html.twig');
     }
 
-    #[IsGranted('ROLE_USER')]
-    #[Route('/odjava-donatora', name: 'unsubscribe')]
-    public function unsubscribe(Request $request): Response
-    {
-        if (!$this->isCsrfTokenValid('unsubscribe', $request->query->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-        $userDonor = $user->getUserDonor();
-
-        if ($userDonor) {
-            $this->entityManager->remove($userDonor);
-            $this->entityManager->flush();
-        }
-
-        $this->addFlash('success', 'Uspešno ste se odjavili sa liste donora');
-
-        return $this->redirectToRoute('donor_request_form');
-    }
 }

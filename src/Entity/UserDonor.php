@@ -26,7 +26,7 @@ class UserDonor
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'userDonor')]
+    #[ORM\ManyToOne(inversedBy: 'userDonors')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 

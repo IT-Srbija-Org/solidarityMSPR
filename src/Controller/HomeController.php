@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\TenantRepository;
 use App\Service\StatisticsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -9,14 +10,16 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
-    public function __construct(private StatisticsService $statisticsService)
+    public function __construct(private StatisticsService $statisticsService, private TenantRepository $tenantRepository)
     {
     }
 
     #[Route('/', name: 'home')]
     public function index(): Response
     {
-        return $this->render('home/index.html.twig');
+        return $this->render('home/index.html.twig', [
+            'tenants' => $this->tenantRepository->findBy([], ['id' => 'DESC']),
+        ]);
     }
 
     public function generalNumbers(): Response

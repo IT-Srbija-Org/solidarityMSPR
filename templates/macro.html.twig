@@ -32,24 +32,17 @@
 {% endmacro %}
 
 {% macro nav_links(additional_link_classes = '') %}
-    {% if app.user and app.user.userDonor %}
+    {% if app.user and app.user.userDonors is not empty %}
         <li>
             <a href="{{ path('donor_request_form') }}" class="text-lg lg:text-base px-4 py-3 lg:py-2 lg:px-3 {{ additional_link_classes }}">
                 <span class="ti ti-heart-filled text-xl"></span>
                 Profil
             </a>
         </li>
-    {% else %}
-        <li>
-            <a href="{{ path('donor_request_form') }}" class="text-lg lg:text-base px-4 py-3 lg:py-2 lg:px-3 {{ additional_link_classes }}">
-                <span class="ti ti-heart text-xl"></span>
-                Postani donator
-            </a>
-        </li>
     {% endif %}
 
     {% if app.user %}
-        {% if app.user.userDonor %}
+        {% if app.user.userDonors is not empty %}
             <li>
                 <a href="{{ path('donor_transaction_list') }}" class="text-lg lg:text-base px-4 py-3 lg:py-2 lg:px-3 {{ additional_link_classes }}">
                     <span class="ti ti-credit-card-pay text-xl"></span>
