@@ -3,6 +3,7 @@
 namespace App\Form\Admin;
 
 use App\Entity\DamagedEducator;
+use App\Entity\Tenant;
 use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -23,6 +24,12 @@ class DamagedEducatorSearchType extends AbstractType
             ->add('name', TextType::class, [
                 'required' => false,
                 'label' => 'Ime',
+            ])
+            ->add('tenant', EntityType::class, [
+                'label' => 'Tenant',
+                'class' => Tenant::class,
+                'choice_label' => 'name',
+                'required' => false,
             ])
             ->add('status', ChoiceType::class, [
                 'required' => false,
