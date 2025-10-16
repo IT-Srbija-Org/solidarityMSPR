@@ -30,7 +30,7 @@ class TenantRepository extends ServiceEntityRepository
 
         if (!empty($criteria['name'])) {
             $queryBuilder->andWhere('t.name LIKE :name')
-                ->setParameter('name', '%' . $criteria['name'] . '%');
+                ->setParameter('name', '%'.$criteria['name'].'%');
         }
 
         $queryBuilder->orderBy('t.id', 'DESC');

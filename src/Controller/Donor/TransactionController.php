@@ -5,7 +5,6 @@ namespace App\Controller\Donor;
 use App\Entity\Transaction;
 use App\Entity\User;
 use App\Form\ProfileTransactionConfirmPaymentType;
-use App\Form\TransactionCreateType;
 use App\Repository\TransactionRepository;
 use App\Service\CreateTransactionService;
 use App\Service\InvoiceSlipService;
@@ -177,5 +176,4 @@ class TransactionController extends AbstractController
             'transaction' => $transaction,
         ]);
     }
-
 }

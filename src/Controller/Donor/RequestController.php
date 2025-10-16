@@ -15,7 +15,6 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(name: 'donor_request_')]
 class RequestController extends AbstractController
@@ -172,5 +171,4 @@ class RequestController extends AbstractController
 
         return $this->render('donor/request/success_need_verify.html.twig');
     }
-
 }
