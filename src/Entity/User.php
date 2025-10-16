@@ -275,6 +275,18 @@ class User implements UserInterface
         return $this->userDonors;
     }
 
+    public function getUserDonor(): ?UserDonor
+    {
+        if ($this->userDonors->isEmpty()) {
+            return null;
+        }
+
+        $donors = $this->userDonors->toArray();
+        usort($donors, fn (UserDonor $a, UserDonor $b) => $b->getCreatedAt() <=> $a->getCreatedAt());
+
+        return $donors[0] ?? null;
+    }
+
     /**
      * @return Collection<int, DamagedEducator>
      */
