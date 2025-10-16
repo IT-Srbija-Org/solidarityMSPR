@@ -4,6 +4,7 @@ namespace App\Form\Admin;
 
 use App\Entity\Tenant;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,6 +21,9 @@ class TenantType extends AbstractType
             ->add('description', TextareaType::class, [
                 'label' => 'Opis',
                 'required' => false,
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'Sačuvaj',
             ]);
     }
 

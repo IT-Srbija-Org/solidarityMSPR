@@ -1,11 +1,13 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/base.html.twig' %}
 
-{% block title %}New Tenant{% endblock %}
+{% block content %}
+    <div class="text-xl">
+        <span class="ti ti-building-store text-2xl"></span>
+        Dodavanje tenanta
+    </div>
 
-{% block body %}
-    <h1>Create new Tenant</h1>
+    <div class="divider"></div>
 
-    {{ include('admin/tenant/_form.html.twig') }}
-
-    <a href="{{ path('admin_tenant_list') }}">back to list</a>
+    {% form_theme form with ['form.html.twig'] %}
+    {{ form(form) }}
 {% endblock %}
