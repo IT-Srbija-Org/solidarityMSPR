@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Tenant;
+use App\Form\Admin\TenantSearchType;
 use App\Form\Admin\TenantType;
 use App\Repository\TenantRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,10 +16,21 @@ use Symfony\Component\Routing\Attribute\Route;
 final class TenantController extends AbstractController
 {
     #[Route('/list', name: 'list')]
-    public function list(TenantRepository $tenantRepository): Response
+    public function list(Request $request, TenantRepository $tenantRepository): Response
     {
+        $form = $this->createForm(TenantSearchType::class);
+        $form->handleRequest($request);
+
+        $criteria = [];
+        if ($form->isSubmitted()) {
+            $criteria = $form->getData();
+        }
+
+        $page = $request->query->getInt('page', 1);
+
         return $this->render('admin/tenant/list.html.twig', [
-            'tenants' => $tenantRepository->findAll(),
+            'tenants' => $tenantRepository->search($criteria, $page),
+            'form' => $form->createView(),
         ]);
     }
 
