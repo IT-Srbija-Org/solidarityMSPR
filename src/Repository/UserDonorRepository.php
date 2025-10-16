@@ -34,6 +34,8 @@ class UserDonorRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('ud');
         $qb->innerJoin('ud.user', 'u')
+            ->leftJoin('ud.tenant', 't')
+            ->addSelect('u', 't')
             ->andWhere('u.isActive = 1');
 
         if (isset($criteria['isMonthly'])) {
