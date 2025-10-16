@@ -34,21 +34,19 @@
 {#        {{ render(controller('App\\Controller\\HomeController::generalNumbers')) }}#}
 
         {% block supportButton %}
-            {% if not app.user or app.user.userDonors is empty %}
-                <div class="text-center flex flex-col gap-4">
-                    {% for tenant in tenants %}
-                        <a href="{{ path('donor_request_form_for_tenant', { 'id': tenant.id }) }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
-                            <span class="ti ti-heart text-2xl"></span>
-                            Postani donator za {{ tenant.name }}
-                        </a>
-                    {% else %}
-                        <a href="{{ path('donor_request_form') }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
-                            <span class="ti ti-heart text-2xl"></span>
-                            Postani donator
-                        </a>
-                    {% endfor %}
-                </div>
-            {% endif %}
+            <div class="text-center flex flex-col gap-4">
+                {% for tenant in tenants %}
+                    <a href="{{ path('donor_request_form_for_tenant', { 'id': tenant.id }) }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
+                        <span class="ti ti-heart text-2xl"></span>
+                        Postani donator za {{ tenant.name }}
+                    </a>
+                {% else %}
+                    <a href="{{ path('donor_request_form') }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
+                        <span class="ti ti-heart text-2xl"></span>
+                        Postani donator
+                    </a>
+                {% endfor %}
+            </div>
         {% endblock %}
 
         <div class="py-10 flex gap-4 flex-col md:flex-row">
