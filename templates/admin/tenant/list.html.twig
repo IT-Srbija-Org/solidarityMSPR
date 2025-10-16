@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tenants{% endblock %}
+
+{% block body %}
+    <h1>Tenants</h1>
+
+    <a href="{{ path('admin_tenant_new') }}" class="btn btn-primary">Create new</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for tenant in tenants %}
+            <tr>
+                <td>{{ tenant.id }}</td>
+                <td>{{ tenant.name }}</td>
+                <td>{{ tenant.description }}</td>
+                <td>
+                    <a href="{{ path('admin_tenant_edit', {'id': tenant.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
