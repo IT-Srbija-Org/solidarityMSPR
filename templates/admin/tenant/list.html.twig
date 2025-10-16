@@ -4,46 +4,51 @@
 {% block title %}Tenants{% endblock %}
 
 {% block content %}
-    <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Tenants</h1>
-        <a href="{{ path('admin_tenant_new') }}" class="btn btn-primary">Create new</a>
-    </div>
+    {{ include('flashes.html.twig') }}
 
-    <div class="mt-4">
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <button class="btn btn-primary">Search</button>
-        {{ form_end(form) }}
-    </div>
+    {% form_theme form with ['form.html.twig', 'form_inline.html.twig'] %}
+    {{ form(form) }}
 
-    <div class="overflow-x-auto mt-4">
-        <table class="table table-zebra w-full">
-            <thead>
+    <div class="overflow-x-auto mt-6">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-gray-500">
+                Ukupno rezultata: <span class="font-bold">{{ tenants.count }}</span>
+            </div>
+
+            <a href="{{ path('admin_tenant_new') }}" class="btn btn-primary">
+                <span class="ti ti-plus text-xl"></span>
+                Dodaj
+            </a>
+        </div>
+
+        <table class="table rounded-xl border border-base-200">
+            <thead class="bg-gray-100">
                 <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Actions</th>
+                    <th>ID</th>
+                    <th>Ime</th>
+                    <th>Opis</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
             {% for tenant in tenants %}
-                <tr>
+                <tr class="hover:bg-gray-100">
                     <td>{{ tenant.id }}</td>
                     <td>{{ tenant.name }}</td>
                     <td>{{ tenant.description }}</td>
                     <td>
-                        <a href="{{ path('admin_tenant_edit', {'id': tenant.id}) }}" class="btn btn-sm btn-outline">Edit</a>
+                        <div class="flex gap-2 justify-end">
+                            <a href="{{ path('admin_tenant_edit', { 'id': tenant.id }) }}" class="btn btn-primary btn-sm flex tooltip" data-tip="Izmeni">
+                                <span class="ti ti-edit text-xl"></span>
+                            </a>
+                        </div>
                     </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="4" class="text-center">No records found</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
 
-    {{ pagination('admin_tenant_list', (tenants.count / 20)|round(0, 'ceil'), app.request.query.get('page', 1)) }}
+    {% import "macro.html.twig" as macro %}
+    {{ macro.pagination('admin_tenant_list', (tenants.count / 20)|round(0, 'ceil'), app.request.query.get('page', 1)) }}
 {% endblock %}
