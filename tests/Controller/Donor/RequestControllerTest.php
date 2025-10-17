@@ -184,7 +184,7 @@ class RequestControllerTest extends WebTestCase
 
         try {
             // This should throw an access denied exception
-            $this->client->request('GET', '/odjava-donatora');
+            $this->client->request('GET', '/odjava-donatora/'.$this->tenant->getId());
 
             // If we get here (no exception), still check for HTTP 403
             $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
@@ -209,7 +209,7 @@ class RequestControllerTest extends WebTestCase
 
         try {
             // This should throw an access denied exception
-            $this->client->request('GET', '/odjava-donatora?_token=invalid');
+            $this->client->request('GET', '/odjava-donatora/'.$this->tenant->getId().'?_token=invalid');
 
             // If we get here (no exception), still check for HTTP 403
             $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());

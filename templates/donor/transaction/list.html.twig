@@ -100,10 +100,12 @@
                                     {% endif %}
                                 </td>
                                 <td data-label="Tenant" data-copyable>
-                                    {% if transaction.isMaskInformation %}
-                                        <span class="text-gray-500 tracking-widest">{{ transaction.damagedEducator.tenant.name|mask }}</span>
-                                    {% else %}
-                                        {{ transaction.damagedEducator.tenant.name }}
+                                    {% if transaction.damagedEducator.tenant %}
+                                        {% if transaction.isMaskInformation %}
+                                            <span class="text-gray-500 tracking-widest">{{ transaction.damagedEducator.tenant.name|mask }}</span>
+                                        {% else %}
+                                            {{ transaction.damagedEducator.tenant.name }}
+                                        {% endif %}
                                     {% endif %}
                                 </td>
                                 <td class="whitespace-nowrap" data-label="Broj računa" data-copyable>
