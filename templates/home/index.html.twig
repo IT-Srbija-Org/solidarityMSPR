@@ -12,26 +12,24 @@
             </p>
         </header>
 
-        {% block supportButton %}
+        {% for tenant in tenants %}
+        <div class="flex gap-4 flex-col md:flex-row">
+            <section class="rounded-lg bg-base-100 shadow-sm w-full ">
+            <p class="mt-6 text-gray-500 text-center" style="font-size:18px">
+                Trenutno je u Mreži oštećenih protiv kojih su podnete prekršajne prijave za {{ tenant.name }}
+            </p>
+            <p style="color:#7ebf50;font-size:42px" class="text-center"><strong>{{ tenant.damagedEducators|length }}</strong></p>
+            </section>
+
+        </div>
+
             <div class="text-center flex flex-col gap-4">
-                {% for tenant in tenants %}
                     <a href="{{ path('donor_request_form_for_tenant', { 'id': tenant.id }) }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
                         <span class="ti ti-heart text-2xl"></span>
                         Postani donator za {{ tenant.name }}
                     </a>
-                {% endfor %}
             </div>
-        {% endblock %}
-
-
-        <div class="flex gap-4 flex-col md:flex-row">
-            <section class="rounded-lg bg-base-100 shadow-sm w-full ">
-            <p class="mt-6 text-gray-500 text-center" style="font-size:18px">
-                Trenutno je u Mreži oštećenih protiv kojih su podnete prekršajne prijave
-            </p>
-            <p style="color:#7ebf50;font-size:42px" class="text-center"><strong>73</strong></p>
-            </section>
-        </div>
+        {% endfor %}
         <div class="py-10 flex gap-4 flex-col md:flex-row">
             <section class="rounded-lg bg-base-100 shadow-sm w-full ">
                 <p class="mt-6 ml-6 mr-6 text-gray-500 text-center" style="font-size:18px">
