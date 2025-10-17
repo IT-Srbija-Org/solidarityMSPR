@@ -16,8 +16,6 @@
                 <h2 class="card-title mb-4">
                     <span class="ti ti-user-heart color-error text-3xl"></span>
                     {% if app.user and app.user.userDonors is not empty %}
-                        Profil
-                        <a href="{{ path('donor_request_unsubscribe', {'_token': csrf_token('unsubscribe')}) }}" class="test-link1 btn btn-sm btn-outline btn-error">Odjavi se sa liste donora</a>
                     {% else %}
                         Postani donator
                     {% endif %}
@@ -129,6 +127,14 @@
                     {{ form_row(form.submit, { 'attr': { 'class': 'btn btn-primary w-full' } }) }}
                 </div>
             {{ form_end(form) }}
+
+
+            {% if app.user and app.user.userDonors is not empty %}
+                <div class="mt-8 text-gray-500 text-sm text-right">
+                    Ako želiš da se odjavite sa liste donatora klikni na sledeći link:
+                    <a href="{{ path('donor_request_unsubscribe', { '_token': csrf_token('unsubscribe') }) }}" onclick="confirm('Da li ste sigurni da želite da se odjavite sa liste donatora?');" class="link link-primary link-hover test-link1">odjava</a>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
