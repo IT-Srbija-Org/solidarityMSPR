@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(name: 'donor_request_')]
 class RequestController extends AbstractController
@@ -170,5 +171,27 @@ class RequestController extends AbstractController
         }
 
         return $this->render('donor/request/success_need_verify.html.twig');
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/odjava-donatora', name: 'unsubscribe')]
+    public function unsubscribe(Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('unsubscribe', $request->query->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $userDonor = $user->getUserDonors()->first();
+
+        if ($userDonor) {
+            $this->entityManager->remove($userDonor);
+            $this->entityManager->flush();
+        }
+
+        $this->addFlash('success', 'Uspešno ste se odjavili sa liste donora');
+
+        return $this->redirectToRoute('donor_request_form');
     }
 }
