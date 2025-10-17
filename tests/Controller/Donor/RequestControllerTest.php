@@ -3,6 +3,7 @@
 namespace App\Tests\Controller\Donor;
 
 use App\DataFixtures\UserFixtures;
+use App\Entity\Tenant;
 use App\Entity\User;
 use App\Repository\UserDonorRepository;
 use App\Repository\UserRepository;
@@ -22,6 +23,7 @@ class RequestControllerTest extends WebTestCase
     private ?EntityManagerInterface $entityManager;
     private ?UserRepository $userRepository;
     private ?UserDonorRepository $userDonorRepository;
+    private Tenant $tenant;
 
     protected function setUp(): void
     {
@@ -34,6 +36,11 @@ class RequestControllerTest extends WebTestCase
         $this->entityManager = $container->get(EntityManagerInterface::class);
         $this->userRepository = $container->get(UserRepository::class);
         $this->userDonorRepository = $container->get(UserDonorRepository::class);
+
+        $this->tenant = new Tenant();
+        $this->tenant->setName('Test Tenant');
+        $this->entityManager->persist($this->tenant);
+        $this->entityManager->flush();
     }
 
     private function loadFixtures(): void
@@ -79,7 +86,7 @@ class RequestControllerTest extends WebTestCase
         $email = 'korisnik@gmail.com';
         $this->removeUser($email);
 
-        $crawler = $this->client->request('GET', '/postani-donator');
+        $crawler = $this->client->request('GET', '/postani-donator/'.$this->tenant->getId());
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSelectorExists('form[name="user_donor"]');
@@ -139,10 +146,10 @@ class RequestControllerTest extends WebTestCase
         $this->assertTrue($user->isEmailVerified());
 
         // Check success message
-        $crawler = $this->client->request('GET', '/postani-donator');
+        $crawler = $this->client->request('GET', '/postani-donator/'.$this->tenant->getId());
 
         // Unsubscribe
-        $unsubscribeLink = $crawler->filter('.test-link1')->attr('href');
+        $unsubscribeLink = $crawler->filter('a:contains("odjava")')->attr('href');
         $this->client->request('GET', $unsubscribeLink);
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
