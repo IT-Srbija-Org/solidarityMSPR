@@ -13,14 +13,15 @@
                 </h2>
                 <p>{{ tenant.description }}</p>
             {% endif %}
-            <h2 class="card-title mb-4">
-                <span class="ti ti-user-heart color-error text-3xl"></span>
-                {% if app.user and app.user.userDonors is not empty %}
-                    Profil
-                {% else %}
-                    Postani donator
-                {% endif %}
-            </h2>
+                <h2 class="card-title mb-4">
+                    <span class="ti ti-user-heart color-error text-3xl"></span>
+                    {% if app.user and app.user.userDonors is not empty %}
+                        Profil
+                        <a href="{{ path('donor_request_unsubscribe', {'_token': csrf_token('unsubscribe')}) }}" class="test-link1 btn btn-sm btn-outline btn-error">Odjavi se sa liste donora</a>
+                    {% else %}
+                        Postani donator
+                    {% endif %}
+                </h2>
 
             <div class="space-y-4">
                 {% if not (app.user and app.user.userDonors is not empty) %}
