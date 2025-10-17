@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\DataFixtures\Data\Amounts;
 use App\DataFixtures\Data\Names;
 use App\Entity\DamagedEducator;
+use App\Entity\Tenant;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
@@ -66,6 +67,11 @@ class DamagedEducatorFixtures extends Fixture implements FixtureGroupInterface
         // Set fixed seed for deterministic results
         mt_srand(1234);
 
+        $tenants = $this->entityManager->getRepository(Tenant::class)->findAll();
+        if (empty($tenants)) {
+            throw new \RuntimeException('No tenants found!');
+        }
+
         // Get all confirmed delegates
         $delegates = $this->entityManager->getRepository(User::class)
             ->createQueryBuilder('u')
@@ -91,6 +97,10 @@ class DamagedEducatorFixtures extends Fixture implements FixtureGroupInterface
             // Pick random confirmed delegate
             $delegate = $delegates[array_rand($delegates)];
             $educator->setCreatedBy($delegate);
+
+            // Pick random tenant
+            $tenant = $tenants[array_rand($tenants)];
+            $educator->setTenant($tenant);
 
             $manager->persist($educator);
         }

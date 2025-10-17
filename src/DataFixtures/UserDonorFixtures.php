@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\DataFixtures\Data\Amounts;
+use App\Entity\Tenant;
 use App\Entity\User;
 use App\Entity\UserDonor;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -29,6 +30,11 @@ class UserDonorFixtures extends Fixture implements FixtureGroupInterface
         // Set fixed seed for deterministic results
         mt_srand(1234);
 
+        $tenants = $this->entityManager->getRepository(Tenant::class)->findAll();
+        if (empty($tenants)) {
+            throw new \RuntimeException('No tenants found!');
+        }
+
         // Get all regular users (not admin, not delegate)
         $users = $this->entityManager->getRepository(User::class)
             ->createQueryBuilder('u')
@@ -54,6 +60,10 @@ class UserDonorFixtures extends Fixture implements FixtureGroupInterface
             // Generate amount between 500 and 100000, clustering around 5000
             $userDonor->setAmount(Amounts::generate(5000, null, 500, 100000));
             $userDonor->setComment($this->comments[array_rand($this->comments)]);
+
+            // Pick random tenant
+            $tenant = $tenants[array_rand($tenants)];
+            $userDonor->setTenant($tenant);
 
             $manager->persist($userDonor);
         }
