@@ -154,9 +154,20 @@ class RequestController extends AbstractController
             return $this->redirectToRoute('donor_request_success');
         }
 
+        $isDonorForTenant = false;
+        if ($user) {
+            foreach ($user->getUserDonors() as $userDonor) {
+                if ($userDonor->getTenant() === $tenant) {
+                    $isDonorForTenant = true;
+                    break;
+                }
+            }
+        }
+
         return $this->render('donor/request/form.html.twig', [
             'form' => $form->createView(),
             'tenant' => $tenant,
+            'isDonorForTenant' => $isDonorForTenant,
         ]);
     }
 
