@@ -20,7 +20,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route(name: 'donor_request_')]
 class RequestController extends AbstractController
 {
-    public function __construct(private EntityManagerInterface $entityManager, private CreateTransactionService $createTransactionService)
+    public function __construct(private EntityManagerInterface $entityManager, private CreateTransactionService $createTransactionService, private UserDonorRepository $userDonorRepository)
     {
     }
 
@@ -185,8 +185,8 @@ class RequestController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/odjava-donatora', name: 'unsubscribe')]
-    public function unsubscribe(Request $request): Response
+    #[Route('/odjava-donatora/{id}', name: 'unsubscribe')]
+    public function unsubscribe(Request $request, Tenant $tenant): Response
     {
         if (!$this->isCsrfTokenValid('unsubscribe', $request->query->get('_token'))) {
             throw $this->createAccessDeniedException();
@@ -194,7 +194,7 @@ class RequestController extends AbstractController
 
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
-        $userDonor = $user->getUserDonors()->first();
+        $userDonor = $this->userDonorRepository->findOneBy(['user' => $user, 'tenant' => $tenant]);
 
         if ($userDonor) {
             $this->entityManager->remove($userDonor);

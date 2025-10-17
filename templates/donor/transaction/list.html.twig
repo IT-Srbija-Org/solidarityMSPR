@@ -69,6 +69,10 @@
                                     Oštećeni/a
                                 </th>
                                 <th>
+                                    <span class="ti ti-building-community text-xl"></span>
+                                    Tenant
+                                </th>
+                                <th>
                                     <span class="ti ti-credit-card text-xl"></span>
                                     Broj računa
                                 </th>
@@ -93,6 +97,13 @@
                                         <span class="text-gray-500 tracking-widest">{{ transaction.damagedEducator.name|mask }}</span>
                                     {% else %}
                                         {{ transaction.damagedEducator.name }}
+                                    {% endif %}
+                                </td>
+                                <td data-label="Tenant" data-copyable>
+                                    {% if transaction.isMaskInformation %}
+                                        <span class="text-gray-500 tracking-widest">{{ transaction.damagedEducator.tenant.name|mask }}</span>
+                                    {% else %}
+                                        {{ transaction.damagedEducator.tenant.name }}
                                     {% endif %}
                                 </td>
                                 <td class="whitespace-nowrap" data-label="Broj računa" data-copyable>
