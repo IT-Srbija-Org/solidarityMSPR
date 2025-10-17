@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller\Admin;
 
+use App\DataFixtures\TenantFixtures;
 use App\DataFixtures\UserFixtures;
 use App\Repository\UserRepository;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
@@ -30,6 +31,7 @@ class HomeControllerTest extends WebTestCase
     private function loadFixtures(): void
     {
         $this->databaseTool->loadFixtures([
+            TenantFixtures::class,
             UserFixtures::class,
         ]);
     }

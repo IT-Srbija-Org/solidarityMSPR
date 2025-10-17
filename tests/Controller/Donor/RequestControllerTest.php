@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller\Donor;
 
+use App\DataFixtures\TenantFixtures;
 use App\DataFixtures\UserFixtures;
 use App\Entity\Tenant;
 use App\Entity\User;
@@ -46,6 +47,7 @@ class RequestControllerTest extends WebTestCase
     private function loadFixtures(): void
     {
         $this->databaseTool->loadFixtures([
+            TenantFixtures::class,
             UserFixtures::class,
         ]);
     }
