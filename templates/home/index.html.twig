@@ -12,6 +12,23 @@
             </p>
         </header>
 
+        {% block supportButton %}
+            <div class="text-center flex flex-col gap-4">
+                {% for tenant in tenants %}
+                    <a href="{{ path('donor_request_form_for_tenant', { 'id': tenant.id }) }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
+                        <span class="ti ti-heart text-2xl"></span>
+                        Postani donator za {{ tenant.name }}
+                    </a>
+                {% else %}
+                    <a href="{{ path('donor_request_form') }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
+                        <span class="ti ti-heart text-2xl"></span>
+                        Postani donator
+                    </a>
+                {% endfor %}
+            </div>
+        {% endblock %}
+
+
         <div class="flex gap-4 flex-col md:flex-row">
             <section class="rounded-lg bg-base-100 shadow-sm w-full ">
             <p class="mt-6 text-gray-500 text-center" style="font-size:18px">
@@ -30,24 +47,6 @@
                 <p class="text-center mb-6" style="color:#7ebf50;font-size:18px"><strong>Solidarno nastavljamo borbu!</strong></p>
             </section>
         </div>
-
-{#        {{ render(controller('App\\Controller\\HomeController::generalNumbers')) }}#}
-
-        {% block supportButton %}
-            <div class="text-center flex flex-col gap-4">
-                {% for tenant in tenants %}
-                    <a href="{{ path('donor_request_form_for_tenant', { 'id': tenant.id }) }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
-                        <span class="ti ti-heart text-2xl"></span>
-                        Postani donator za {{ tenant.name }}
-                    </a>
-                {% else %}
-                    <a href="{{ path('donor_request_form') }}" class="btn btn-primary btn-xl transition duration-200 hover:scale-105">
-                        <span class="ti ti-heart text-2xl"></span>
-                        Postani donator
-                    </a>
-                {% endfor %}
-            </div>
-        {% endblock %}
 
         <div class="py-10 flex gap-4 flex-col md:flex-row">
             <section class="rounded-lg bg-base-100 p-6 shadow-sm w-full md:w-1/2">
@@ -201,8 +200,6 @@
                 </div>
             </section>
         </div>
-
-        {{ block('supportButton') }}
 
         <section class="text-center mt-10">
             <div class="text-gray-500">
