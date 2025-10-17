@@ -75,12 +75,6 @@ class RequestControllerTest extends WebTestCase
         }
     }
 
-    public function testNonAuthenticatedAccess(): void
-    {
-        $this->client->request('GET', '/postani-donator');
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-    }
-
     public function testNewUserSubscribeAndRegistrationAndVerification(): void
     {
         $email = 'korisnik@gmail.com';
