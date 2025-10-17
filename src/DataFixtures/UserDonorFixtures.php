@@ -47,24 +47,37 @@ class UserDonorFixtures extends Fixture implements FixtureGroupInterface
             ->getQuery()
             ->getResult();
 
-        // Randomly select 70% of users
+        // Shuffle users for random selection
         shuffle($users);
-        $selectedCount = (int) ceil(count($users) * 0.7);
-        $selectedUsers = array_slice($users, 0, $selectedCount);
 
-        foreach ($selectedUsers as $user) {
+        // Ensure we have enough users for 36 donors
+        if (count($users) < 36) {
+            throw new \RuntimeException('Not enough users to create 36 donors!');
+        }
+
+        // Create 20 monthly donors
+        for ($i = 0; $i < 20; ++$i) {
+            $user = $users[$i];
             $userDonor = new UserDonor();
             $userDonor->setUser($user);
-            $userDonor->setIsMonthly((bool) mt_rand(0, 1));
-
-            // Generate amount between 500 and 100000, clustering around 5000
+            $userDonor->setIsMonthly(true);
             $userDonor->setAmount(Amounts::generate(5000, null, 500, 100000));
             $userDonor->setComment($this->comments[array_rand($this->comments)]);
-
-            // Pick random tenant
             $tenant = $tenants[array_rand($tenants)];
             $userDonor->setTenant($tenant);
+            $manager->persist($userDonor);
+        }
 
+        // Create 16 non-monthly donors
+        for ($i = 20; $i < 36; ++$i) {
+            $user = $users[$i];
+            $userDonor = new UserDonor();
+            $userDonor->setUser($user);
+            $userDonor->setIsMonthly(false);
+            $userDonor->setAmount(Amounts::generate(5000, null, 500, 100000));
+            $userDonor->setComment($this->comments[array_rand($this->comments)]);
+            $tenant = $tenants[array_rand($tenants)];
+            $userDonor->setTenant($tenant);
             $manager->persist($userDonor);
         }
 
