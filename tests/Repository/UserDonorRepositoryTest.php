@@ -2,6 +2,9 @@
 
 namespace App\Tests\Repository;
 
+use App\DataFixtures\TenantFixtures;
+use App\DataFixtures\UserDonorFixtures;
+use App\DataFixtures\UserFixtures;
 use App\Entity\UserDonor;
 use App\Repository\UserDonorRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,8 +32,9 @@ class UserDonorRepositoryTest extends KernelTestCase
     private function loadFixtures(): void
     {
         $this->databaseTool->loadFixtures([
-            'App\DataFixtures\UserFixtures',
-            'App\DataFixtures\UserDonorFixtures',
+            TenantFixtures::class,
+            UserFixtures::class,
+            UserDonorFixtures::class,
         ]);
     }
 

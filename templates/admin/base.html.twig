@@ -78,6 +78,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ path('admin_tenant_list') }}" class="{% if app.request.get('_route') == 'admin_tenant_list' %}menu-active{% endif %}">
+                        <span class="ti ti-building-community text-2xl"></span>
+                        Tenants
+                    </a>
+                </li>
+                <li>
                     <a href="{{ path('admin_user_list') }}" class="{% if app.request.get('_route') == 'admin_user_list' %}menu-active{% endif %}">
                         <span class="ti ti-users text-2xl"></span>
                         Korisnici

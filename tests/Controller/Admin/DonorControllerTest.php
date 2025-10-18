@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller\Admin;
 
+use App\DataFixtures\TenantFixtures;
 use App\DataFixtures\UserDonorFixtures;
 use App\DataFixtures\UserFixtures;
 use App\Entity\User;
@@ -34,6 +35,7 @@ class DonorControllerTest extends WebTestCase
     private function loadFixtures(): void
     {
         $this->databaseTool->loadFixtures([
+            TenantFixtures::class,
             UserFixtures::class,
             UserDonorFixtures::class,
         ]);

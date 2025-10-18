@@ -37,6 +37,8 @@ class DamagedEducatorRepository extends ServiceEntityRepository
     public function search(array $criteria, int $page = 1, int $limit = 50): array
     {
         $qb = $this->createQueryBuilder('e');
+        $qb->leftJoin('e.tenant', 't')
+            ->addSelect('t');
 
         if (!empty($criteria['name'])) {
             $qb->andWhere('e.name LIKE :name')
@@ -58,6 +60,11 @@ class DamagedEducatorRepository extends ServiceEntityRepository
         if (!empty($criteria['createdBy'])) {
             $qb->andWhere('e.createdBy = :createdBy')
                 ->setParameter('createdBy', $criteria['createdBy']);
+        }
+
+        if (!empty($criteria['tenant'])) {
+            $qb->andWhere('e.tenant = :tenant')
+                ->setParameter('tenant', $criteria['tenant']);
         }
 
         // Set the sorting

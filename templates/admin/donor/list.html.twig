@@ -20,6 +20,10 @@
                         Ime
                     </th>
                     <th>
+                        <span class="ti ti-building text-xl"></span>
+                        Tenant
+                    </th>
+                    <th>
                         <span class="ti ti-repeat text-xl"></span>
                         Mesečna podrška
                     </th>
@@ -43,6 +47,11 @@
                         <a href="{{ path('admin_user_details', { 'id': donor.user.id }) }}" class="link link-primary link-hover">
                             {{ donor.user.email }}
                         </a>
+                    </td>
+                    <td>
+                        {% if donor.tenant %}
+                            {{ donor.tenant.name }}
+                        {% endif %}
                     </td>
                     <td>
                         {% if donor.isMonthly %}

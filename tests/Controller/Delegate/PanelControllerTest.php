@@ -3,6 +3,7 @@
 namespace App\Tests\Controller\Delegate;
 
 use App\DataFixtures\DamagedEducatorFixtures;
+use App\DataFixtures\TenantFixtures;
 use App\DataFixtures\UserFixtures;
 use App\Entity\DamagedEducator;
 use App\Repository\DamagedEducatorRepository;
@@ -35,15 +36,10 @@ class PanelControllerTest extends WebTestCase
     private function loadFixtures(): void
     {
         $this->databaseTool->loadFixtures([
+            TenantFixtures::class,
             UserFixtures::class,
             DamagedEducatorFixtures::class,
         ]);
-    }
-
-    private function loginAsUser(): void
-    {
-        $user = $this->userRepository->findOneBy(['email' => 'korisnik@gmail.com']);
-        $this->client->loginUser($user);
     }
 
     private function loginAsDelegate(): void

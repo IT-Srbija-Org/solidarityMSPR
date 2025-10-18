@@ -1,0 +1,126 @@
+@startuml
+hide empty members
+hide circle
+skinparam MinClassWidth 150
+skinparam LineType Ortho
+title solidarityMSPR
+!theme _none_
+entity log_number {
+* id: integer
+--
+* total_donors: integer
+* total_monthly_donors: integer
+* total_non_monthly_donors: integer
+* sum_amount_monthly_donors: bigint
+* sum_amount_non_monthly_donors: bigint
+* total_delegates: integer
+* created_at: date
+}
+entity log_login {
+* id: integer
+--
+* user_id: integer
+* ip: string
+* headers: json
+* created_at: datetime
+}
+entity damaged_educator {
+* id: integer
+--
+ tenant_id: integer
+ created_by_id: integer
+* name: string
+* amount: integer
+* account_number: string
+* status: integer
+ city: string
+ status_comment: text
+* created_at: datetime
+* updated_at: datetime
+}
+entity user_donor {
+* id: integer
+--
+ tenant_id: integer
+* user_id: integer
+* is_monthly: boolean
+* amount: integer
+ comment: text
+* created_at: datetime
+* updated_at: datetime
+}
+entity transaction {
+* id: integer
+--
+* user_donor_id: integer
+* damaged_educator_id: integer
+* account_number: string
+* amount: integer
+* status: integer
+ status_comment: text
+* user_donor_confirmed: boolean
+* created_at: datetime
+* updated_at: datetime
+ user_donor_first_name: string
+ user_donor_last_name: string
+}
+entity city {
+* id: integer
+--
+* name: string
+* created_at: datetime
+* updated_at: datetime
+}
+entity log_entity_change {
+* id: integer
+--
+ changed_by_user_id: integer
+* action: string
+* entity_name: string
+ entity_id: integer
+* created_at: datetime
+ changes: json
+}
+entity log_command_change {
+* id: integer
+--
+* name: string
+* entity_name: string
+* entity_id: integer
+* message: text
+* created_at: datetime
+}
+entity user {
+* id: integer
+--
+* email: string
+* roles: json
+ first_name: string
+ last_name: string
+* is_active: boolean
+* created_at: datetime
+* updated_at: datetime
+* is_email_verified: boolean
+ reset_token: string
+ reset_token_created_at: datetime
+ last_visit: datetime
+}
+
+entity tenant {
+* id: integer
+--
+* name: string
+ description: string
+}
+
+log_login }o-left-|| user
+log_entity_change }o-left-o| user
+transaction }o-down-|| damaged_educator
+transaction }o-down-|| user_donor
+damaged_educator }o-down-o| user
+user ||-up-o{ user_donor
+
+
+tenant ||-right-o{ user_donor
+tenant ||-right-o{ damaged_educator
+@enduml

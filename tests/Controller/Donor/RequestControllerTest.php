@@ -2,7 +2,9 @@
 
 namespace App\Tests\Controller\Donor;
 
+use App\DataFixtures\TenantFixtures;
 use App\DataFixtures\UserFixtures;
+use App\Entity\Tenant;
 use App\Entity\User;
 use App\Repository\UserDonorRepository;
 use App\Repository\UserRepository;
@@ -22,6 +24,7 @@ class RequestControllerTest extends WebTestCase
     private ?EntityManagerInterface $entityManager;
     private ?UserRepository $userRepository;
     private ?UserDonorRepository $userDonorRepository;
+    private Tenant $tenant;
 
     protected function setUp(): void
     {
@@ -34,11 +37,17 @@ class RequestControllerTest extends WebTestCase
         $this->entityManager = $container->get(EntityManagerInterface::class);
         $this->userRepository = $container->get(UserRepository::class);
         $this->userDonorRepository = $container->get(UserDonorRepository::class);
+
+        $this->tenant = new Tenant();
+        $this->tenant->setName('Test Tenant');
+        $this->entityManager->persist($this->tenant);
+        $this->entityManager->flush();
     }
 
     private function loadFixtures(): void
     {
         $this->databaseTool->loadFixtures([
+            TenantFixtures::class,
             UserFixtures::class,
         ]);
     }
@@ -68,18 +77,12 @@ class RequestControllerTest extends WebTestCase
         }
     }
 
-    public function testNonAuthenticatedAccess(): void
-    {
-        $this->client->request('GET', '/postani-donator');
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-    }
-
     public function testNewUserSubscribeAndRegistrationAndVerification(): void
     {
         $email = 'korisnik@gmail.com';
         $this->removeUser($email);
 
-        $crawler = $this->client->request('GET', '/postani-donator');
+        $crawler = $this->client->request('GET', '/postani-donator/'.$this->tenant->getId());
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSelectorExists('form[name="user_donor"]');
@@ -139,10 +142,10 @@ class RequestControllerTest extends WebTestCase
         $this->assertTrue($user->isEmailVerified());
 
         // Check success message
-        $crawler = $this->client->request('GET', '/postani-donator');
+        $crawler = $this->client->request('GET', '/postani-donator/'.$this->tenant->getId());
 
         // Unsubscribe
-        $unsubscribeLink = $crawler->filter('.test-link1')->attr('href');
+        $unsubscribeLink = $crawler->filter('a:contains("odjava")')->attr('href');
         $this->client->request('GET', $unsubscribeLink);
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
@@ -154,7 +157,7 @@ class RequestControllerTest extends WebTestCase
     public function testSuccessMessageRoute(): void
     {
         $this->loginAsUser('korisnik@gmail.com');
-        $this->client->request('GET', '/uspesna-registracija-donatora');
+        $this->client->request('GET', '/uspesna-registracija-donatora/'.$this->tenant->getId());
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSelectorTextContains('h2', 'Uspešno ste se registrovali kao donator!');
@@ -162,7 +165,7 @@ class RequestControllerTest extends WebTestCase
 
     public function testNotAuthenticatedSuccessMessageRoute(): void
     {
-        $this->client->request('GET', '/uspesna-registracija-donatora');
+        $this->client->request('GET', '/uspesna-registracija-donatora/'.$this->tenant->getId());
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSelectorTextContains('h2', 'Potvrdite svoj email kako bi donacija bila uspešna');
@@ -177,7 +180,7 @@ class RequestControllerTest extends WebTestCase
 
         try {
             // This should throw an access denied exception
-            $this->client->request('GET', '/odjava-donatora');
+            $this->client->request('GET', '/odjava-donatora/'.$this->tenant->getId());
 
             // If we get here (no exception), still check for HTTP 403
             $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
@@ -202,7 +205,7 @@ class RequestControllerTest extends WebTestCase
 
         try {
             // This should throw an access denied exception
-            $this->client->request('GET', '/odjava-donatora?_token=invalid');
+            $this->client->request('GET', '/odjava-donatora/'.$this->tenant->getId().'?_token=invalid');
 
             // If we get here (no exception), still check for HTTP 403
             $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());

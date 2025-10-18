@@ -20,6 +20,10 @@
                         Ime
                     </th>
                     <th>
+                        <span class="ti ti-building text-xl"></span>
+                        Tenant
+                    </th>
+                    <th>
                         <span class="ti ti-cash text-xl"></span>
                         Iznos
                     </th>
@@ -50,6 +54,11 @@
                 <tr class="hover:bg-gray-100">
                     <td>{{ damagedEducator.id }}</td>
                     <td>{{ damagedEducator.name }}</td>
+                    <td>
+                        {% if damagedEducator.tenant %}
+                            {{ damagedEducator.tenant.name }}
+                        {% endif %}
+                    </td>
                     <td>{{ damagedEducator.amount|number_format }}</td>
                     <td class="whitespace-nowrap">{{ damagedEducator.accountNumber|account_number_format }}</td>
                     <td class="whitespace-nowrap">{{ damagedEducator.createdAt|date('H:i d.m.Y.') }}</td>

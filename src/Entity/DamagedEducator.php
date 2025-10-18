@@ -69,6 +69,9 @@ class DamagedEducator
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'damagedEducators')]
+    private ?Tenant $tenant = null;
+
     /**
      * @var Collection<int, Transaction>
      */
@@ -269,5 +272,17 @@ class DamagedEducator
     public function isStatusDeleted(): bool
     {
         return self::STATUS_DELETED === $this->status;
+    }
+
+    public function getTenant(): ?Tenant
+    {
+        return $this->tenant;
+    }
+
+    public function setTenant(?Tenant $tenant): static
+    {
+        $this->tenant = $tenant;
+
+        return $this;
     }
 }

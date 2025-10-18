@@ -2,6 +2,8 @@
 
 namespace App\Form\Admin;
 
+use App\Entity\Tenant;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -26,6 +28,12 @@ class DonorSearchType extends AbstractType
             ->add('email', TextType::class, [
                 'required' => false,
                 'label' => 'Email',
+            ])
+            ->add('tenant', EntityType::class, [
+                'label' => 'Tenant',
+                'class' => Tenant::class,
+                'choice_label' => 'name',
+                'required' => false,
             ])
             ->add('isMonthly', ChoiceType::class, [
                 'required' => false,

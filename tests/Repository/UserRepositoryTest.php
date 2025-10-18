@@ -2,6 +2,7 @@
 
 namespace App\Tests\Repository;
 
+use App\DataFixtures\TenantFixtures;
 use App\DataFixtures\UserFixtures;
 use App\Entity\User;
 use App\Repository\UserRepository;
@@ -30,6 +31,7 @@ class UserRepositoryTest extends KernelTestCase
     private function loadFixtures(): void
     {
         $this->databaseTool->loadFixtures([
+            TenantFixtures::class,
             UserFixtures::class,
         ]);
     }

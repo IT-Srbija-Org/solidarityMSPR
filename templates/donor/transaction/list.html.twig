@@ -58,10 +58,6 @@
                         <div class="text-gray-500 total-results">
                             Ukupno rezultata: <span class="font-bold">{{ transactions.total }}</span>
                         </div>
-
-                        <a href="{{ path('donor_transaction_create') }}" class="btn btn-primary ml-auto" data-umami-event="donor_click_donate">
-                            <span class="ti ti-credit-card-pay text-xl mr-1"></span> Kreiraj instrukcije za uplatu
-                        </a>
                     </div>
 
 
@@ -71,6 +67,10 @@
                                 <th>
                                     <span class="ti ti-school text-xl"></span>
                                     Oštećeni/a
+                                </th>
+                                <th>
+                                    <span class="ti ti-building-community text-xl"></span>
+                                    Tenant
                                 </th>
                                 <th>
                                     <span class="ti ti-credit-card text-xl"></span>
@@ -97,6 +97,15 @@
                                         <span class="text-gray-500 tracking-widest">{{ transaction.damagedEducator.name|mask }}</span>
                                     {% else %}
                                         {{ transaction.damagedEducator.name }}
+                                    {% endif %}
+                                </td>
+                                <td data-label="Tenant" data-copyable>
+                                    {% if transaction.damagedEducator.tenant %}
+                                        {% if transaction.isMaskInformation %}
+                                            <span class="text-gray-500 tracking-widest">{{ transaction.damagedEducator.tenant.name|mask }}</span>
+                                        {% else %}
+                                            {{ transaction.damagedEducator.tenant.name }}
+                                        {% endif %}
                                     {% endif %}
                                 </td>
                                 <td class="whitespace-nowrap" data-label="Broj računa" data-copyable>

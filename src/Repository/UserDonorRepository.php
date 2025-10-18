@@ -34,6 +34,8 @@ class UserDonorRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('ud');
         $qb->innerJoin('ud.user', 'u')
+            ->leftJoin('ud.tenant', 't')
+            ->addSelect('u', 't')
             ->andWhere('u.isActive = 1');
 
         if (isset($criteria['isMonthly'])) {
@@ -54,6 +56,11 @@ class UserDonorRepository extends ServiceEntityRepository
         if (!empty($criteria['email'])) {
             $qb->andWhere('u.email LIKE :email')
                 ->setParameter('email', '%'.$criteria['email'].'%');
+        }
+
+        if (!empty($criteria['tenant'])) {
+            $qb->andWhere('ud.tenant = :tenant')
+                ->setParameter('tenant', $criteria['tenant']);
         }
 
         // Set the sorting
