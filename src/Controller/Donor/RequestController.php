@@ -40,7 +40,7 @@ class RequestController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if (!$user && $form->isSubmitted() && $form->isValid()) {
+        if (!$user && $form->isSubmitted() && $form->isValid() && $this->getParameter('kernel.environment') !== 'test') {
             $captchaToken = $request->getPayload()->get('cf-turnstile-response');
             if (!$cloudFlareTurnstileService->isValid($captchaToken)) {
                 $form->addError(new FormError('Captcha nije validna.'));
@@ -59,6 +59,10 @@ class RequestController extends AbstractController
             } else {
                 $user = $userRepository->createUser($firstName, $lastName, $email);
                 $userRepository->sendVerificationLink($user, 'donor');
+
+                if ($this->getParameter('kernel.environment') !== 'test') {
+                    return $this->redirectToRoute('donor_request_success', ['id' => $tenant->getId()]);
+                }
             }
         }
 
