@@ -157,7 +157,7 @@ class RequestControllerTest extends WebTestCase
     public function testSuccessMessageRoute(): void
     {
         $this->loginAsUser('korisnik@gmail.com');
-        $this->client->request('GET', '/uspesna-registracija-donatora');
+        $this->client->request('GET', '/uspesna-registracija-donatora/'.$this->tenant->getId());
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSelectorTextContains('h2', 'Uspešno ste se registrovali kao donator!');
@@ -165,7 +165,7 @@ class RequestControllerTest extends WebTestCase
 
     public function testNotAuthenticatedSuccessMessageRoute(): void
     {
-        $this->client->request('GET', '/uspesna-registracija-donatora');
+        $this->client->request('GET', '/uspesna-registracija-donatora/'.$this->tenant->getId());
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSelectorTextContains('h2', 'Potvrdite svoj email kako bi donacija bila uspešna');

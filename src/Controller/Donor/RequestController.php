@@ -84,7 +84,7 @@ class RequestController extends AbstractController
                 return $this->redirectToRoute('donor_transaction_list');
             }
 
-            return $this->redirectToRoute('donor_request_success');
+            return $this->redirectToRoute('donor_request_success', ['id' => $tenant->getId()]);
         }
 
         $isDonorForTenant = false;
@@ -104,23 +104,30 @@ class RequestController extends AbstractController
         ]);
     }
 
-    #[Route('/uspesna-registracija-donatora', name: 'success')]
-    public function messageSuccess(): Response
+    #[Route('/uspesna-registracija-donatora/{id}', name: 'success')]
+    public function messageSuccess(Tenant $tenant): Response
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
         if ($user && $user->isEmailVerified()) {
-            return $this->render('donor/request/success.html.twig');
+            return $this->render('donor/request/success.html.twig', [
+                'tenant' => $tenant,
+            ]);
         }
 
-        return $this->render('donor/request/success_need_verify.html.twig');
+        return $this->render('donor/request/success_need_verify.html.twig', [
+            'tenant' => $tenant,
+        ]);
     }
 
     #[IsGranted('ROLE_USER')]
     #[Route('/odjava-donatora/{id}', name: 'unsubscribe')]
-    public function unsubscribe(Request $request, Tenant $tenant): Response
+    public function unsubscribe(Request $request, ?Tenant $tenant): Response
     {
+        if (is_null($tenant)) {
+            return $this->redirectToRoute('home');
+        }
         if (!$this->isCsrfTokenValid('unsubscribe', $request->query->get('_token'))) {
             throw $this->createAccessDeniedException();
         }
@@ -136,6 +143,6 @@ class RequestController extends AbstractController
 
         $this->addFlash('success', 'Uspešno ste se odjavili sa liste donora');
 
-        return $this->redirectToRoute('donor_request_form');
+        return $this->redirectToRoute('donor_request_form_for_tenant', ['id' => $tenant->getId()]);
     }
 }
