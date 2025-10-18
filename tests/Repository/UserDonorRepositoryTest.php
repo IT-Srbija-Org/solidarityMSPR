@@ -34,7 +34,7 @@ class UserDonorRepositoryTest extends KernelTestCase
         $this->databaseTool->loadFixtures([
             TenantFixtures::class,
             UserFixtures::class,
-            UserDonorFixtures::class
+            UserDonorFixtures::class,
         ]);
     }
 
