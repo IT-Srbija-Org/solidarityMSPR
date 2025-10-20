@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\DamagedEducator;
+use App\Entity\Tenant;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -19,6 +21,12 @@ class DamagedEducatorSearchType extends AbstractType
             ->add('name', TextType::class, [
                 'required' => false,
                 'label' => 'Ime',
+            ])
+            ->add('tenant', EntityType::class, [
+                'class' => Tenant::class,
+                'choice_label' => 'name',
+                'required' => false,
+                'label' => 'Tenant',
             ])
             ->add('status', ChoiceType::class, [
                 'required' => false,
