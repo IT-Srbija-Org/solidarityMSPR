@@ -30,6 +30,10 @@
                                     Ime oštećenog
                                 </th>
                                 <th>
+                                    <span class="ti ti-building-community text-xl"></span>
+                                    Tenant
+                                </th>
+                                <th>
                                     <span class="ti ti-user-heart text-xl"></span>
                                     Ime donatora
                                 </th>
@@ -64,6 +68,11 @@
                                         {{ transaction.damagedEducator.name }}
                                     </a>
                                 </td>
+                                <td>
+                                    {% if transaction.damagedEducator.tenant %}
+                                        {{ transaction.damagedEducator.tenant.name }}
+                                    {% endif %}
+                                </td>
                                 <td>{{ transaction.userDonorFullName }}</td>
                                 <td>{{ transaction.referenceCode }}</td>
                                 <td class="whitespace-nowrap">{{ transaction.accountNumber|account_number_format }}</td>
@@ -92,7 +101,7 @@
                             </tr>
                         {% endfor %}
                         <tr>
-                            <td colspan="7"></td>
+                            <td colspan="8"></td>
                             <td>
                                 <a href="#" class="btn btn-primary whitespace-nowrap js-saveAll info-step3">
                                     <span class="ti ti-check text-xl"></span>
