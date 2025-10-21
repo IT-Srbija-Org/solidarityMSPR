@@ -14,6 +14,7 @@
             <div>
                 {% form_theme form 'form.html.twig' %}
                 {{ form_start(form) }}
+                    {{ form_row(form.tenant) }}
                     <div class="mb-4">
                         {{ form_label(form.name) }}
                         {{ form_widget(form.name) }}

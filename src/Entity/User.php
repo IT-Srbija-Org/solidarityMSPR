@@ -68,8 +68,8 @@ class User implements UserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $resetTokenCreatedAt = null;
 
-    #[ORM\OneToOne(mappedBy: 'user')]
-    private ?UserDonor $userDonor = null;
+    #[ORM\OneToMany(targetEntity: UserDonor::class, mappedBy: 'user')]
+    private Collection $userDonors;
 
     /**
      * @var Collection<int, DamagedEducator>
@@ -90,6 +90,7 @@ class User implements UserInterface
     {
         $this->damagedEducators = new ArrayCollection();
         $this->transactions = new ArrayCollection();
+        $this->userDonors = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -266,9 +267,24 @@ class User implements UserInterface
         return $this->firstName.' '.$this->lastName;
     }
 
+    /**
+     * @return Collection<int, UserDonor>
+     */
+    public function getUserDonors(): Collection
+    {
+        return $this->userDonors;
+    }
+
     public function getUserDonor(): ?UserDonor
     {
-        return $this->userDonor;
+        if ($this->userDonors->isEmpty()) {
+            return null;
+        }
+
+        $donors = $this->userDonors->toArray();
+        usort($donors, fn (UserDonor $a, UserDonor $b) => $b->getCreatedAt() <=> $a->getCreatedAt());
+
+        return $donors[0] ?? null;
     }
 
     /**

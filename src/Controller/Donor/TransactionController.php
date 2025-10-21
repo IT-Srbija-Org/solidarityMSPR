@@ -5,7 +5,6 @@ namespace App\Controller\Donor;
 use App\Entity\Transaction;
 use App\Entity\User;
 use App\Form\ProfileTransactionConfirmPaymentType;
-use App\Form\TransactionCreateType;
 use App\Repository\TransactionRepository;
 use App\Service\CreateTransactionService;
 use App\Service\InvoiceSlipService;
@@ -175,38 +174,6 @@ class TransactionController extends AbstractController
         return $this->render('donor/transaction/confirm_payment.html.twig', [
             'form' => $form->createView(),
             'transaction' => $transaction,
-        ]);
-    }
-
-    #[Route('/doniraj', name: 'create')]
-    public function create(Request $request)
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-        $userDonor = $user->getUserDonor();
-
-        $haveWaitingTransactions = $this->transactionRepository->count([
-            'user' => $user,
-            'status' => Transaction::STATUS_NEW,
-        ]);
-
-        $form = $this->createForm(TransactionCreateType::class, null, [
-            'haveWaitingTransactions' => $haveWaitingTransactions,
-        ]);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $amount = $form->get('amount')->getData();
-            $this->createTransactionService->create($userDonor, $amount);
-
-            $this->addFlash('success', 'Kreirane su ti instrukcije za uplatu, ostalo je samo da ih uplatiš i potvrdiš uplatu.');
-
-            return $this->redirectToRoute('donor_transaction_list');
-        }
-
-        return $this->render('donor/transaction/create.html.twig', [
-            'form' => $form->createView(),
-            'haveWaitingTransactions' => $haveWaitingTransactions,
         ]);
     }
 }

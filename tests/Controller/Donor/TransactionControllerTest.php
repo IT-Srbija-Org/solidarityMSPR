@@ -3,11 +3,11 @@
 namespace App\Tests\Controller\Donor;
 
 use App\DataFixtures\DamagedEducatorFixtures;
+use App\DataFixtures\TenantFixtures;
 use App\DataFixtures\TransactionFixtures;
 use App\DataFixtures\UserDonorFixtures;
 use App\DataFixtures\UserFixtures;
 use App\Repository\TransactionRepository;
-use App\Repository\UserRepository;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -19,7 +19,6 @@ class TransactionControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
     private AbstractDatabaseTool $databaseTool;
-    private ?UserRepository $userRepository;
     private ?TransactionRepository $transactionRepository;
 
     protected function setUp(): void
@@ -30,13 +29,13 @@ class TransactionControllerTest extends WebTestCase
         $this->databaseTool = $container->get(DatabaseToolCollection::class)->get();
         $this->loadFixtures();
 
-        $this->userRepository = $container->get(UserRepository::class);
         $this->transactionRepository = $container->get(TransactionRepository::class);
     }
 
     private function loadFixtures(): void
     {
         $this->databaseTool->loadFixtures([
+            TenantFixtures::class,
             UserFixtures::class,
             UserDonorFixtures::class,
             DamagedEducatorFixtures::class,

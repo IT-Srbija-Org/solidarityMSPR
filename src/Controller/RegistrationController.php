@@ -99,11 +99,13 @@ class RegistrationController extends AbstractController
 
             $action = $request->get('action');
             if ('donor' == $action) {
-                $userDonorRepository->sendSuccessEmail($user);
+                $userDonor = $user->getUserDonors()->last();
+                if ($userDonor) {
+                    $userDonorRepository->sendSuccessEmail($user);
+                    $this->createTransactionService->create($userDonor, $userDonor->getAmount());
 
-                $this->createTransactionService->create($user->getUserDonor(), $user->getUserDonor()->getAmount());
-
-                return $this->redirectToRoute('donor_request_success');
+                    return $this->redirectToRoute('donor_request_success', ['id' => $userDonor->getTenant()->getId()]);
+                }
             }
 
             if ('delegate' == $action) {

@@ -26,7 +26,7 @@ class UserDonor
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'userDonor')]
+    #[ORM\ManyToOne(inversedBy: 'userDonors')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
@@ -47,6 +47,9 @@ class UserDonor
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
+
+    #[ORM\ManyToOne(inversedBy: 'userDonors')]
+    private ?Tenant $tenant = null;
 
     public function getId(): ?int
     {
@@ -124,6 +127,18 @@ class UserDonor
     public function setUpdatedAt(): static
     {
         $this->updatedAt = new \DateTime();
+
+        return $this;
+    }
+
+    public function getTenant(): ?Tenant
+    {
+        return $this->tenant;
+    }
+
+    public function setTenant(?Tenant $tenant): static
+    {
+        $this->tenant = $tenant;
 
         return $this;
     }

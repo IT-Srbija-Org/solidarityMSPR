@@ -4,7 +4,7 @@
     {% import "macro.html.twig" as macro %}
     {{ macro.tutorial() }}
 
-    <div class="card card-lg bg-base-100 shadow m-4 mt-0">
+    <div class="card card-lg bg-base-100 shadow m-4 mt-10">
         <div class="card-body">
             <h2 class="card-title mb-4 info-step1">
                 <span class="ti ti-device-desktop-analytics text-3xl"></span>
@@ -133,6 +133,10 @@
                                     Ime
                                 </th>
                                 <th>
+                                    <span class="ti ti-building text-xl"></span>
+                                    Tenant
+                                </th>
+                                <th>
                                     <span class="ti ti-cash text-xl"></span>
                                     Iznos
                                 </th>
@@ -166,6 +170,11 @@
                                 {% endfor %}
 
                                 <td>{{ damagedEducator.name }}</td>
+                                <td>
+                                    {% if damagedEducator.tenant %}
+                                        {{ damagedEducator.tenant.name }}
+                                    {% endif %}
+                                </td>
                                 <td>{{ damagedEducator.amount|number_format }}</td>
                                 <td>{{ transactionSumConfirmed|number_format }}</td>
                                 <td class="whitespace-nowrap">{{ damagedEducator.accountNumber|account_number_format }}</td>

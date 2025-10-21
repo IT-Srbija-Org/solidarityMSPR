@@ -2,6 +2,7 @@
 
 namespace App\Controller\Donor;
 
+use App\Entity\Tenant;
 use App\Entity\UserDonor;
 use App\Form\UserDonorType;
 use App\Repository\UserDonorRepository;
@@ -19,19 +20,19 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route(name: 'donor_request_')]
 class RequestController extends AbstractController
 {
-    public function __construct(private EntityManagerInterface $entityManager, private CreateTransactionService $createTransactionService)
+    public function __construct(private EntityManagerInterface $entityManager, private CreateTransactionService $createTransactionService, private UserDonorRepository $userDonorRepository)
     {
     }
 
-    #[Route('/postani-donator', name: 'form')]
-    public function form(Request $request, UserRepository $userRepository, UserDonorRepository $userDonorRepository, CloudFlareTurnstileService $cloudFlareTurnstileService): Response
+    #[Route('/postani-donator/{id}', name: 'form_for_tenant')]
+    public function formForTenant(Request $request, UserRepository $userRepository, UserDonorRepository $userDonorRepository, CloudFlareTurnstileService $cloudFlareTurnstileService, Tenant $tenant): Response
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
         $userDonor = new UserDonor();
-        if ($user && $user->getUserDonor()) {
-            $userDonor = $user->getUserDonor();
+        if ($user) {
+            $userDonor = $userDonorRepository->findOneBy(['user' => $user, 'tenant' => $tenant]) ?? new UserDonor();
         }
 
         $form = $this->createForm(UserDonorType::class, $userDonor, [
@@ -39,7 +40,7 @@ class RequestController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-        if (!$user && $form->isSubmitted() && $form->isValid()) {
+        if (!$user && $form->isSubmitted() && $form->isValid() && 'test' !== $this->getParameter('kernel.environment')) {
             $captchaToken = $request->getPayload()->get('cf-turnstile-response');
             if (!$cloudFlareTurnstileService->isValid($captchaToken)) {
                 $form->addError(new FormError('Captcha nije validna.'));
@@ -58,6 +59,10 @@ class RequestController extends AbstractController
             } else {
                 $user = $userRepository->createUser($firstName, $lastName, $email);
                 $userRepository->sendVerificationLink($user, 'donor');
+
+                if ('test' !== $this->getParameter('kernel.environment')) {
+                    return $this->redirectToRoute('donor_request_success', ['id' => $tenant->getId()]);
+                }
             }
         }
 
@@ -65,6 +70,7 @@ class RequestController extends AbstractController
             $isNew = !$userDonor->getId();
 
             $userDonor->setUser($user);
+            $userDonor->setTenant($tenant);
             $this->entityManager->persist($userDonor);
             $this->entityManager->flush();
 
@@ -82,38 +88,57 @@ class RequestController extends AbstractController
                 return $this->redirectToRoute('donor_transaction_list');
             }
 
-            return $this->redirectToRoute('donor_request_success');
+            return $this->redirectToRoute('donor_request_success', ['id' => $tenant->getId()]);
+        }
+
+        $isDonorForTenant = false;
+        if ($user) {
+            foreach ($user->getUserDonors() as $userDonor) {
+                if ($userDonor->getTenant() === $tenant) {
+                    $isDonorForTenant = true;
+                    break;
+                }
+            }
         }
 
         return $this->render('donor/request/form.html.twig', [
             'form' => $form->createView(),
+            'tenant' => $tenant,
+            'isDonorForTenant' => $isDonorForTenant,
         ]);
     }
 
-    #[Route('/uspesna-registracija-donatora', name: 'success')]
-    public function messageSuccess(): Response
+    #[Route('/uspesna-registracija-donatora/{id}', name: 'success')]
+    public function messageSuccess(Tenant $tenant): Response
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
         if ($user && $user->isEmailVerified()) {
-            return $this->render('donor/request/success.html.twig');
+            return $this->render('donor/request/success.html.twig', [
+                'tenant' => $tenant,
+            ]);
         }
 
-        return $this->render('donor/request/success_need_verify.html.twig');
+        return $this->render('donor/request/success_need_verify.html.twig', [
+            'tenant' => $tenant,
+        ]);
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/odjava-donatora', name: 'unsubscribe')]
-    public function unsubscribe(Request $request): Response
+    #[Route('/odjava-donatora/{id}', name: 'unsubscribe')]
+    public function unsubscribe(Request $request, ?Tenant $tenant): Response
     {
+        if (is_null($tenant)) {
+            return $this->redirectToRoute('home');
+        }
         if (!$this->isCsrfTokenValid('unsubscribe', $request->query->get('_token'))) {
             throw $this->createAccessDeniedException();
         }
 
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
-        $userDonor = $user->getUserDonor();
+        $userDonor = $this->userDonorRepository->findOneBy(['user' => $user, 'tenant' => $tenant]);
 
         if ($userDonor) {
             $this->entityManager->remove($userDonor);
@@ -122,6 +147,6 @@ class RequestController extends AbstractController
 
         $this->addFlash('success', 'Uspešno ste se odjavili sa liste donora');
 
-        return $this->redirectToRoute('donor_request_form');
+        return $this->redirectToRoute('donor_request_form_for_tenant', ['id' => $tenant->getId()]);
     }
 }

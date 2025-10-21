@@ -13,4 +13,5 @@ return [
     Liip\TestFixturesBundle\LiipTestFixturesBundle::class => ['dev' => true, 'test' => true],
     Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => ['all' => true],
     Sentry\SentryBundle\SentryBundle::class => ['prod' => true],
+    Jawira\DoctrineDiagramBundle\DoctrineDiagramBundle::class => ['dev' => true],
 ];

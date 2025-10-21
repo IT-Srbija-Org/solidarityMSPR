@@ -3,7 +3,9 @@
 namespace App\Form;
 
 use App\Entity\DamagedEducator;
+use App\Entity\Tenant;
 use App\Form\DataTransformer\AccountNumberTransformer;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -23,6 +25,12 @@ class DamagedEducatorEditType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('tenant', EntityType::class, [
+                'label' => 'Tenant',
+                'class' => Tenant::class,
+                'choice_label' => 'name',
+                'placeholder' => 'Izaberite ustanovu',
+            ])
             ->add('name', TextType::class, [
                 'label' => 'Ime',
             ])

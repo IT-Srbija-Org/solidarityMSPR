@@ -6,17 +6,23 @@
 
     <div class="card card-lg bg-base-100 shadow m-4 mt-0">
         <div class="card-body">
-            <h2 class="card-title mb-4">
-                <span class="ti ti-user-heart color-error text-3xl"></span>
-                {% if app.user and app.user.userDonor %}
-                    Profil
-                {% else %}
-                    Postani donator
-                {% endif %}
-            </h2>
+            {% if tenant is defined and tenant %}
+                <h2 class="card-title mb-4">
+                    <span class="ti ti-user-heart color-error text-3xl"></span>
+                    {{ tenant.name }}
+                </h2>
+                <p>{{ tenant.description }}</p>
+            {% endif %}
+                <h2 class="card-title mb-4">
+                    <span class="ti ti-user-heart color-error text-3xl"></span>
+                    {% if app.user and app.user.userDonors is not empty %}
+                    {% else %}
+                        Postani donator
+                    {% endif %}
+                </h2>
 
             <div class="space-y-4">
-                {% if not (app.user and app.user.userDonor) %}
+                {% if not (app.user and app.user.userDonors is not empty) %}
                     <div>
                         <div>Priključi se – Pomozimo sada!</div>
                         <div></div>
@@ -122,10 +128,11 @@
                 </div>
             {{ form_end(form) }}
 
-            {% if app.user and app.user.userDonor %}
+
+            {% if isDonorForTenant is defined and isDonorForTenant %}
                 <div class="mt-8 text-gray-500 text-sm text-right">
                     Ako želiš da se odjavite sa liste donatora klikni na sledeći link:
-                    <a href="{{ path('donor_request_unsubscribe', { '_token': csrf_token('unsubscribe') }) }}" onclick="confirm('Da li ste sigurni da želite da se odjavite sa liste donatora?');" class="link link-primary link-hover test-link1">odjava</a>
+                    <a href="{{ path('donor_request_unsubscribe', { 'id': tenant.id, '_token': csrf_token('unsubscribe') }) }}" onclick="return confirm('Da li ste sigurni da želite da se odjavite sa liste donatora?');" class="link link-primary link-hover">odjava</a>
                 </div>
             {% endif %}
         </div>
