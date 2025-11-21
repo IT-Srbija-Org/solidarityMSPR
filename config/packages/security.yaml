@@ -17,6 +17,9 @@ security:
             lazy: true
             provider: app_user_provider
             user_checker: App\Security\UserChecker
+            entry_point: App\Security\GoogleAuthenticator
+            custom_authenticators:
+                - App\Security\GoogleAuthenticator
 
             login_link:
                 login_path: login

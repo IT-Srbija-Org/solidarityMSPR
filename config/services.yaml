@@ -40,3 +40,12 @@ services:
             - connect:
                   - '%env(REDIS_HOST)%'
                   - '%env(int:REDIS_PORT)%'
+
+knpu_oauth2_client:
+    clients:
+        google:
+            type: google
+            client_id: '%env(GOOGLE_CLIENT_ID)%'
+            client_secret: '%env(GOOGLE_CLIENT_SECRET)%'
+            redirect_route: connect_google_check
+            redirect_params: {}
