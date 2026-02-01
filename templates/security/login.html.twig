@@ -23,6 +23,13 @@
 
                     {{ include('captcha.html.twig') }}
                     <button type="submit" class="btn btn-primary w-full">Uloguj se</button>
+
+                    <div class="divider my-10">ili</div>
+
+                    <a href="{{ path('connect_google_start') }}" class="btn btn-outline w-full">
+                        <i class="ti ti-brand-google"></i>
+                        Uloguj se sa Google nalogom
+                    </a>
                 </form>
 
                 <div class="divider my-10"></div>

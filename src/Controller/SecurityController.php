@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\UserRepository;
 use App\Service\CloudFlareTurnstileService;
+use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,5 +73,13 @@ class SecurityController extends AbstractController
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    #[Route('/povezi/google', name: 'connect_google_start')]
+    public function connect(ClientRegistry $clientRegistry): \Symfony\Component\HttpFoundation\RedirectResponse
+    {
+        return $clientRegistry
+            ->getClient('google')
+            ->redirect([], []);
     }
 }
