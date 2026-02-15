@@ -1,0 +1,6 @@
+connect_google_start:
+    path: /povezi/google
+    controller: App\Controller\SecurityController::connect
+
+connect_google_check:
+    path: /povezi/google/provera
