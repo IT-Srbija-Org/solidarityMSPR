@@ -52,10 +52,10 @@ class CreateCommand extends Command
 
             foreach ($userDonors as $userDonor) {
                 $output->write('Process donor '.$userDonor->getUser()->getEmail().' at '.date('Y-m-d H:i:s'));
-                if ($this->createTransactionService->hasNotPaidTransactionsInLastDays($userDonor, 10)) {
-                    $output->writeln(' | has "not paid" transactions in last 10 days');
-                    continue;
-                }
+                //                if ($this->createTransactionService->hasNotPaidTransactionsInLastDays($userDonor, 10)) {
+                //                    $output->writeln(' | has "not paid" transactions in last 10 days');
+                //                    continue;
+                //                }
 
                 $sumTransactions = $this->createTransactionService->getSumTransactions($userDonor);
                 $donorRemainingAmount = $userDonor->getAmount() - $sumTransactions;
